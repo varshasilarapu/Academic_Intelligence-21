@@ -1,24 +1,30 @@
 from kafka import KafkaConsumer
 import snowflake.connector
 import json
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Kafka Consumer
 consumer = KafkaConsumer(
-    'student_topic',
-    bootstrap_servers='localhost:9092',
+    os.getenv("KAFKA_TOPIC"),
+    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
     auto_offset_reset='earliest',
     value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 
 # Snowflake Connection
 conn = snowflake.connector.connect(
-    user='VARSHA',
-    password='Academicintelli@21',
-    account='ba83678.ap-southeast-1',
-    warehouse='COMPUTE_WH',
-    database='ACADEMIC_INTELLIGENCE',
-    schema='PUBLIC'
+    user=os.getenv("SNOWFLAKE_USER"),
+    password=os.getenv("SNOWFLAKE_PASSWORD"),
+    account=os.getenv("SNOWFLAKE_ACCOUNT"),
+    warehouse=os.getenv("SNOWFLAKE_WAREHOUSE"),
+    database=os.getenv("SNOWFLAKE_DATABASE"),
+    schema=os.getenv("SNOWFLAKE_SCHEMA")
 )
+
 cursor = conn.cursor()
 
 print("Waiting for Kafka data...\n")
