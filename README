@@ -1,0 +1,119 @@
+# 🎓 Academic Intelligence Pipeline
+
+      A real-time student analytics pipeline built using **Apache Kafka**, **Snowflake**, and **Python**.  
+      This project fetches student data from university APIs, streams the data through Kafka, and stores it in Snowflake for centralized analytics.
+
+---
+
+# 🚀 Project Architecture
+
+      University API
+            ↓
+      Kafka Producer
+            ↓
+      Kafka Topic (student_topic)
+            ↓
+      Kafka Consumer
+            ↓
+      Snowflake Database
+
+📌 Features
+    Real-time API data streaming
+    Kafka-based message pipeline
+    Snowflake centralized database
+    Student academic analytics
+    Scalable data integration architecture
+
+🛠️ Technologies Used
+    Python
+    Apache Kafka
+    Snowflake
+    Requests Library
+    Kafka-Python
+    Snowflake Connector
+
+📂 Project Files
+    producer.py
+    consumer.py
+    README.md
+
+🔗 API Used
+    College Student Data API
+    https://info.aec.edu.in/adityaapi/api/studentdata/{roll_no}
+
+⚙️ Kafka Setup
+    Start Kafka Server
+    cd C:\kafka\bin\windows
+    
+    kafka-server-start.bat ../../config/server.properties
+    Create Kafka Topic
+    kafka-topics.bat --create --topic student_topic --bootstrap-server localhost:9092
+    Verify Topic
+    kafka-topics.bat --list --bootstrap-server localhost:9092
+
+🗄️ Snowflake Setup
+    Create Database
+    CREATE DATABASE academic_intelligence;
+    Use Database
+    USE DATABASE academic_intelligence;
+    Create Table
+    CREATE TABLE students (
+        studentname STRING,
+        rollno STRING,
+        branch STRING,
+        overallpercent FLOAT,
+        mobilenumber STRING
+    );
+
+📦 Install Required Libraries
+    pip install kafka-python
+    pip install snowflake-connector-python
+    pip install requests
+
+📤 Producer Script
+   The producer fetches student data from the API and sends it to Kafka.
+
+   Run Producer
+   python producer.py
+
+  Example Input:
+  Enter Roll Number:
+  22A91A05K7
+
+Example Output:
+  ✅ Data sent to Kafka successfully
+
+📥 Consumer Script
+
+    The consumer reads Kafka messages and inserts data into Snowflake.
+    Run Consumer
+    python consumer.py
+
+Example Output:
+
+   Waiting for Kafka data...
+
+   ✅ Data inserted into Snowflake
+
+📊 Verify Data in Snowflake
+    Run:
+    SELECT * FROM students;
+
+🎯 Workflow
+    • User enters student roll number
+    • Producer fetches API data
+    • Kafka streams data through topic
+    • Kafka streams data through topic
+    • Consumer receives Kafka messages
+    • Snowflake stores centralized student data
+
+📈 Future Enhancements
+    • Streamlit Dashboard
+    • Apache Airflow Integration
+    • dbt Transformations
+    • Machine Learning Predictions
+    • AI Chatbot Integration
+    • Multi-API Integration
+
+👨‍💻 Authors
+   Academic Intelligence Project Team
