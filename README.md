@@ -39,7 +39,6 @@
 
 🔗 API Used
     College Student Data API
-    https://info.aec.edu.in/adityaapi/api/studentdata/{roll_no}
 
 ⚙️ Kafka Setup
     Start Kafka Server
@@ -78,7 +77,6 @@
 
   Example Input:
   Enter Roll Number:
-  22A91A05K7
 
 Example Output:
   ✅ Data sent to Kafka successfully
