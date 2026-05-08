@@ -1,0 +1,59 @@
+🚀 PIPELINE 2 — MongoDB → Kafka → Snowflake
+✅ Project Structure
+mongodb-kafka-snowflake/
+│
+├── mongo_producer.py
+├── mongo_consumer.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── README.md
+
+✅ STEP 1 — Initialize Git
+git init
+
+✅ STEP 2 — Create .gitignore
+.env
+__pycache__/
+*.pyc
+
+✅ STEP 3 — Create .env.example
+MONGO_URI=your_mongodb_uri
+
+SNOWFLAKE_USER=your_user
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_WAREHOUSE=COMPUTE_WH
+SNOWFLAKE_DATABASE=ACADEMIC_INTELLIGENCE
+SNOWFLAKE_SCHEMA=PUBLIC
+
+KAFKA_SERVER=localhost:9092
+
+✅ STEP 4 — Install Dependencies
+pip install kafka-python pymongo snowflake-connector-python python-dotenv
+
+✅ STEP 5 — Create requirements.txt
+pip freeze > requirements.txt
+
+✅ STEP 6 — Start Kafka Server
+cd C:\kafka
+bin\windows\kafka-server-start.bat config\server.properties
+
+✅ STEP 7 — Create Kafka Topic
+cd C:\kafka\bin\windows
+kafka-topics.bat --create --topic mongodb_topic --bootstrap-server localhost:9092
+
+✅ STEP 8 — Run Mongo Consumer
+python mongo_consumer.py
+
+✅ STEP 9 — Run Mongo Producer
+python mongo_producer.py
+
+✅ STEP 10 — Git Commit
+git add .
+git commit -m "Added MongoDB to Kafka to Snowflake pipeline"
+
+✅ STEP 11 — Push to GitHub
+git branch -M main
+git remote add origin YOUR_REPOSITORY_URL
+git push -u origin main
