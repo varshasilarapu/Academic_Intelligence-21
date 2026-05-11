@@ -1,0 +1,186 @@
+# Snowflake Database Tables
+
+## 1️⃣ mongodb_students Table
+
+This table is created to store student academic and personal information collected from the MongoDB database through the Kafka pipeline.
+
+### Purpose
+
+* Stores student details from MongoDB
+* Acts as the primary student dataset
+* Contains roll numbers required for API integrations
+* Used as the base table for analytics and joins
+
+### Data Flow
+
+MongoDB → Kafka → Snowflake (`mongodb_students`)
+
+### Stored Information
+
+* Student Name
+* Roll Number
+* Gender
+* College
+* Branch
+* Passout Year
+* Backlogs
+* B.Tech Percentage
+
+---
+
+## 2️⃣ api_students Table
+
+This table is created to store coding profile and competitive programming statistics collected from multiple APIs using Kafka pipelines.
+
+### Purpose
+
+* Stores coding platform statistics
+* Tracks student coding performance
+* Stores LeetCode, GeeksForGeeks, CodeChef, and HackerRank data
+* Used for performance analytics and dashboard generation
+
+### Data Flow
+
+Coding APIs → Kafka → Snowflake (`api_students`)
+
+### Stored Information
+
+* Roll Number
+* Coding Platform
+* Easy Problems Solved
+* Medium Problems Solved
+* Hard Problems Solved
+* Total Problems Solved
+* Rank
+* Streak
+* Weekly Solved Count
+* Profile URL
+* Raw API Response Data
+
+---
+
+## 3️⃣ final_students Table
+
+This table is created by joining both MongoDB student data and API coding profile data using the common field `rollno`.
+
+### Purpose
+
+* Combines academic and coding profile data
+* Provides a unified analytics table
+* Used for reporting, dashboards, and student performance analysis
+
+### Join Condition
+
+`mongodb_students.rollno = api_students.rollno`
+
+### Final Output Includes
+
+* Student Academic Details
+* Coding Performance Statistics
+* Coding Platform Profiles
+* Combined Student Analytics
+
+---
+
+# Overall Architecture
+
+MongoDB → Kafka → Snowflake
+
+Coding APIs → Kafka → Snowflake
+
+Final Join → Unified Analytics Table
+
+CREATE DATABASE IF NOT EXISTS academic_intelligence;
+
+USE DATABASE academic_intelligence;
+
+USE SCHEMA public;
+
+CREATE OR REPLACE TABLE api_students (
+
+    rollno STRING,
+
+    platform STRING,
+
+    attendance_percentage FLOAT,
+
+    total_problems FLOAT,
+
+    easy FLOAT,
+
+    medium FLOAT,
+
+    hard FLOAT,
+
+    rank FLOAT,
+
+    streak FLOAT,
+
+    weekly_solved FLOAT,
+
+    profile_url STRING,
+
+    raw_data VARIANT
+);
+select * from  api_students;
+
+CREATE OR REPLACE TABLE mongodb_students (
+
+    student_id STRING,
+
+    studentname STRING,
+
+    rollno STRING,
+
+    gender STRING,
+
+    college STRING,
+
+    branch STRING,
+
+    passout_year FLOAT,
+
+    dob STRING,
+
+    section STRING,
+
+    backlogs FLOAT,
+
+    btech FLOAT
+);
+select * from mongodb_students;
+
+CREATE OR REPLACE TABLE final_students AS
+
+SELECT
+
+    m.student_id,
+    m.studentname,
+    m.rollno,
+    m.gender,
+    m.college,
+    m.branch,
+    m.passout_year,
+    m.dob,
+    m.section,
+    m.backlogs,
+    m.btech,
+
+    a.platform,
+    a.attendance_percentage,
+    a.total_problems,
+    a.easy,
+    a.medium,
+    a.hard,
+    a.rank,
+    a.streak,
+    a.weekly_solved,
+    a.profile_url,
+    a.raw_data
+
+FROM mongodb_students m
+
+LEFT JOIN api_students a
+ON m.rollno = a.rollno;
+
+SELECT * FROM final_students LIMIT 20;
