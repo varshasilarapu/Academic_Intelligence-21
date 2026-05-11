@@ -39,13 +39,13 @@ bin\windows\kafka-server-start.bat config\server.properties
 
 ✅ STEP 7 — Create Kafka Topic
 cd C:\kafka\bin\windows
-kafka-topics.bat --create --topic student_topic --bootstrap-server localhost:9092
+kafka-topics.bat --create --topic apitopic --bootstrap-server localhost:9092
 
 ✅ STEP 8 — Run Consumer
-python consumer.py
+python api_consumer.py
 
 ✅ STEP 9 — Run Producer
-python producer.py
+python api_producer.py
 
 ✅ STEP 10 — Git Commit
 git add .
