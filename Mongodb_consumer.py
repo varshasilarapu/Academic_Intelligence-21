@@ -1,22 +1,18 @@
-from kafka import KafkaProducer
-from dotenv import load_dotenv
+from kafka import KafkaConsumer
 import snowflake.connector
-import requests
-import json
+from dotenv import load_dotenv
 import os
-import urllib3
-
-urllib3.disable_warnings()
+import json
 
 load_dotenv()
 
-# Kafka Producer
-producer = KafkaProducer(
+consumer = KafkaConsumer(
+    'mongodbtopic',
     bootstrap_servers=os.getenv("KAFKA_SERVER"),
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    auto_offset_reset='earliest',
+    value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 
-# Snowflake Connection
 conn = snowflake.connector.connect(
     user=os.getenv("SNOWFLAKE_USER"),
     password=os.getenv("SNOWFLAKE_PASSWORD"),
@@ -28,93 +24,46 @@ conn = snowflake.connector.connect(
 
 cursor = conn.cursor()
 
-# Get ALL roll numbers
-cursor.execute("""
-SELECT DISTINCT rollno
-FROM mongodb_students
-WHERE rollno IS NOT NULL
-""")
+print("Receiving MongoDB Kafka data...\n")
 
-roll_numbers = [row[0] for row in cursor.fetchall()]
+for message in consumer:
 
-# APIs
-apis = {
-    "leetcode": "https://maya.technicalhub.io/node/api/get-leetcode-details-by-rollno",
-    "gfg": "https://maya.technicalhub.io/node/api/get-geeksforgeeks-details-by-rollno",
-    "codechef": "https://maya.technicalhub.io/node/api/get-codechef-details-by-rollno",
-    "hackerrank": "https://maya.technicalhub.io/node/api/get-hackerrank-details-by-rollno"
-}
+    data = message.value
 
-print("Sending API data to Kafka...\n")
+    query = """
+    INSERT INTO mongodb_students (
+        student_id,
+        studentname,
+        rollno,
+        gender,
+        college,
+        branch,
+        passout_year,
+        dob,
+        section,
+        backlogs,
+        btech
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
 
-for roll in roll_numbers:
+    values = (
+        data.get("student_id"),
 
-    for platform, url in apis.items():
+        data.get("studentname"),
+        data.get("rollno"),
+        data.get("gender"),
+        data.get("college"),
+        data.get("branch"),
+        float(data.get("passout_year", 0)),
+        data.get("dob"),
+        data.get("section"),
+        float(data.get("backlogs", 0)),
+        float(data.get("btech", 0))
+    )
 
-        body = {
-            "roll_no": roll
-        }
+    cursor.execute(query, values)
 
-        try:
+    conn.commit()
 
-            response = requests.post(
-                url,
-                json=body,
-                verify=False
-            )
-
-            data = response.json()
-
-            final_data = {
-
-                "rollno": roll,
-
-                "platform": platform,
-
-                "attendance_percentage": 0,
-
-                "total_problems":
-                    data.get("lc_total_progarms") or
-                    data.get("total_problems") or 0,
-
-                "easy":
-                    data.get("lc_easy") or
-                    data.get("easy") or 0,
-
-                "medium":
-                    data.get("lc_medium") or
-                    data.get("medium") or 0,
-
-                "hard":
-                    data.get("lc_hard") or
-                    data.get("hard") or 0,
-
-                "rank":
-                    data.get("lc_rank") or
-                    data.get("rank") or 0,
-
-                "streak":
-                    data.get("lc_streak") or
-                    data.get("streak") or 0,
-
-                "weekly_solved":
-                    data.get("lc_weekly_solved") or
-                    data.get("weekly_solved") or 0,
-
-                "profile_url":
-                    data.get("lc_profile") or
-                    data.get("profile_url") or
-                    "N/A",
-
-                "raw_data": data
-            }
-
-            producer.send("apitopic", final_data)
-
-            producer.flush()
-
-            print(f"✅ Sent {roll} - {platform}")
-
-        except Exception as e:
-
-            print(f"❌ Error for {roll}: {e
+    print(f"✅ Inserted {data.get('rollno')}")
