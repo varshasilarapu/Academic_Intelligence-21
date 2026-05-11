@@ -41,7 +41,7 @@ bin\windows\kafka-server-start.bat config\server.properties
 
 ✅ STEP 7 — Create Kafka Topic
 cd C:\kafka\bin\windows
-kafka-topics.bat --create --topic mongodb_topic --bootstrap-server localhost:9092
+kafka-topics.bat --create --topic mongodbtopic --bootstrap-server localhost:9092
 
 ✅ STEP 8 — Run Mongo Consumer
 python mongo_consumer.py
