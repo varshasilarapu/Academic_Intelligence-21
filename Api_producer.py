@@ -6,7 +6,6 @@ import json
 import os
 import urllib3
 
-urllib3.disable_warnings()
 
 load_dotenv()
 
@@ -60,7 +59,7 @@ for roll in roll_numbers:
             response = requests.post(
                 url,
                 json=body,
-                verify=False
+                verify=True
             )
 
             data = response.json()
