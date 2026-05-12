@@ -290,11 +290,11 @@ Recommendation Engine — AI-powered subject and career recommendations
 ---
 👥 Team Members
 Name	Role
-[Team Member 1]	Data Engineering (Kafka + Snowflake)
-[Team Member 2]	Data Transformation (dbt + SQL)
-[Team Member 3]	Machine Learning (Dropout Prediction)
-[Team Member 4]	AI Chatbot (Copilot Studio)
-[Team Member 5]	Analytics & Power BI Dashboards
+[Billakurthi Varshitha]	Data Engineering (Kafka + Snowflake)
+[Silarapu Varshini Satyapriya]	Data Transformation (dbt + SQL)
+[BUDAMPARTHI JYOTHSNA VIJAYA LAKSHMI]	Machine Learning (Dropout Prediction)
+[VARRE KAVYA SRI]	AI Chatbot (Copilot Studio)
+[PILLI MOUNIKA SAI SRUTHI]	Analytics & Power BI Dashboards
 ---
 📄 License
 This project is developed as part of an academic project at Aditya Engineering College.
