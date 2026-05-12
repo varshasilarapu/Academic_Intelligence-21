@@ -3,7 +3,22 @@ import snowflake.connector
 from dotenv import load_dotenv
 import json
 import os
+import logging
+import snowflake.connector
 
+# Use logging instead of print
+logging.basicConfig(level=logging.INFO)
+
+def insert_to_snowflake(data):
+    try:
+        # Use context manager (the 'with' statement) to auto-close connections
+        with snowflake.connector.connect(...) as conn:
+            with conn.cursor() as cur:
+                cur.execute("INSERT INTO ...", (data))
+                conn.commit()
+                logging.info("Successfully inserted record.")
+    except snowflake.connector.Error as e:
+        logging.error(f"Snowflake error: {e}")
 load_dotenv()
 
 consumer = KafkaConsumer(
